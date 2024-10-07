@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+
+:root {
+  --bg-color: #e5e7eb;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-color);
+}
+
+body {
+  margin: 0;
+  display: flex;
+}
+
+.background {
+  background: rgb(30,44,43);
+  background: linear-gradient(180deg, rgba(30,44,43,1) 0%, rgba(54,63,28,1) 100%);
+  min-height: 20vh;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  color: white;
+  margin:20px
+}
+
+
+/* Loader Code */
+/* From Uiverse.io by Shoh2008 */
+.loader {
+  position: fixed; /* Position fixed to cover the viewport */
+  top: 0; /* Cover the entire screen vertically */
+  left: 0; /* Cover the entire screen horizontally */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: #1e2c2b; /* Semi-transparent background color */
+  display: flex; /* Center the loader */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 9999; /* Ensure it appears above other elements */
+}
+
+.loader:after {
+  content: '$';
+  display: inline-block;
+  width: 100px; /* Increased width */
+  height: 100px; /* Increased height */
+  border-radius: 50%;
+  text-align: center;
+  line-height: 90px; /* Adjust line height to center text vertically */
+  font-size: 64px; /* Increased font size */
+  font-weight: bold;
+  background: #FFD700;
+  color: #DAA520;
+  border: 6px double; /* Increased border thickness */
+  box-sizing: border-box;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
+  animation: coin-flip 4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+@keyframes coin-flip {
+  0%, 100% {
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5);
+  }
+
+  0% {
+    transform: rotateY(0deg);
+  }
+
+  50% {
+    transform: rotateY(1800deg);
+    animation-timing-function: cubic-bezier(0, 0.5, 0.5, 1);
+  }
+
+  100% {
+    transform: rotateY(3600deg);
+  }
+}
+
