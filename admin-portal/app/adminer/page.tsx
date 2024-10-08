@@ -34,7 +34,7 @@ export default function AdminPage() {
   useEffect(() => {
     const adminID = localStorage.getItem('adminId');
     if (adminID) {
-      fetch(`${apiUrl}User/GetAllAdmins`, {
+      fetch(`${apiUrl}Admin/GetAllAdmins`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

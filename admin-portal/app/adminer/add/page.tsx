@@ -25,7 +25,7 @@ export default function AddAdminPage() {
 
   const handleSave = async (username: string, email: string, role: string, password: string) => {
     try {
-      const response = await fetch(`${apiUrl}User/CreateAdmin`, {
+      const response = await fetch(`${apiUrl}Admin/CreateAdmin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

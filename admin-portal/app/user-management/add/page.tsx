@@ -23,7 +23,7 @@ export default function AddUserPage() {
 
   const handleSave = async (user: string, email: string, balance: string, saving: string, goal: string, createdAt: string, password : string) => {
     try {
-      const response = await fetch(`${apiUrl}User/CreatePlayerByAdmin`, {
+      const response = await fetch(`${apiUrl}Admin/CreatePlayerByAdmin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

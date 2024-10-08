@@ -36,7 +36,7 @@ export default function ProfilePage() {
 
     if (adminID) {
         // First API call to fetch admin details
-        fetch(`${apiUrl}User/Admin/${adminID}`, {
+        fetch(`${apiUrl}Admin/Admin/${adminID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export default function ProfilePage() {
     const adminID = localStorage.getItem('adminId');
     try {
       if (adminID) {
-        const response = await fetch(`${apiUrl}User/UpdateAdmin/${adminID}`,
+        const response = await fetch(`${apiUrl}Admin/UpdateAdmin/${adminID}`,
           {
             method: 'PUT',
             headers: {

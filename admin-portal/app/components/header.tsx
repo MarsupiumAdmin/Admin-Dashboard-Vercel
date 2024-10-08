@@ -42,7 +42,7 @@ export default function Header({ title }: { title: string }) {
   useEffect(() => {
     const adminID = localStorage.getItem('adminId');
     if (adminID) {
-      fetch(`${apiUrl}User/Admin/${adminID}`,
+      fetch(`${apiUrl}Admin/Admin/${adminID}`,
         {
           method: 'GET',
           headers:{

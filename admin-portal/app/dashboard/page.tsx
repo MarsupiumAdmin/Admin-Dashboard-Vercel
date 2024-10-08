@@ -23,7 +23,7 @@ export default function Page() {
 
     if (adminID) {
         // First API call to fetch admin details
-        fetch(`${apiUrl}User/Admin/${adminID}`, {
+        fetch(`${apiUrl}Admin/Admin/${adminID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export default function Page() {
             setUsername(data.data.username); // Set the username
 
             // After successfully fetching admin details, make the second API call
-            return fetch(`${apiUrl}User/Dashboard`, {
+            return fetch(`${apiUrl}Admin/Dashboard`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

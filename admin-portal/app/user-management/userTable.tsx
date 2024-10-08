@@ -95,7 +95,7 @@ export default function UserTable({
     console.log(editedData);
     try {
       if (userId) {
-        const response = await fetch(`${apiUrl}User/UpdatePlayerByAdmin/${userId}`, {
+        const response = await fetch(`${apiUrl}Admin/UpdatePlayerByAdmin/${userId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function UserTable({
     const userId = deleteRowId;
     try {
       if (userId) {
-        const response = await fetch(`${apiUrl}User/DeletePlayerByAdmin/${userId}`, {
+        const response = await fetch(`${apiUrl}Admin/DeletePlayerByAdmin/${userId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

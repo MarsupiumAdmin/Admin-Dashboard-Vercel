@@ -89,7 +89,7 @@ export default function TaskTable({
     const adminID = editedData.id;
     try {
       if (adminID) {
-        const response = await fetch(`${apiUrl}User/UpdateAdmin/${adminID}`,
+        const response = await fetch(`${apiUrl}Admin/UpdateAdmin/${adminID}`,
           {
             method: 'PUT',
             headers: {
@@ -129,7 +129,7 @@ export default function TaskTable({
     const adminID = deleteRowId;
     try {
       if (adminID) {
-        const response = await fetch(`${apiUrl}User/DeleteAdmin/${adminID}`,
+        const response = await fetch(`${apiUrl}Admin/DeleteAdmin/${adminID}`,
           {
             method: 'DELETE',
             headers: {

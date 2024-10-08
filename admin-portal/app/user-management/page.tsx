@@ -37,7 +37,7 @@ export default function UserPage() {
   useEffect(() => {
     const adminID = localStorage.getItem('adminId');
     if (adminID) {
-      fetch(`${apiUrl}User/GetAllPlayers`, {
+      fetch(`${apiUrl}Admin/GetAllPlayers`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
