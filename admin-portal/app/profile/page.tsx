@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      console.log('File selected:', file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfileImage(reader.result as string);
@@ -127,7 +128,7 @@ export default function ProfilePage() {
                     onClick={triggerFileInput}
                     className="absolute bottom-2 left-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
                   >
-                    <Upload className="w-4 h-4 inline mr-1" />
+                  <Upload className="w-4 h-4 inline mr-1" />
                     Upload
                   </button>
                   <input
