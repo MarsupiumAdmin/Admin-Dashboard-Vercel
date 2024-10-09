@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Bell } from 'lucide-react';
 import Image from 'next/image';
 import { apiUrl } from './commonConstants';
 
 export default function Header({ title }: { title: string }) {
   const [isMobile, setIsMobile] = useState(false);
   const [currentDate, setCurrentDate] = useState('');
-  const [adminDetails, setAdminDetails] = useState({ username: '', role: '' });
+  const [adminDetails, setAdminDetails] = useState({ username: '', role: '', imageUrl: '' });
 
   useEffect(() => { 
     const updateDate = () => {
@@ -61,6 +60,7 @@ export default function Header({ title }: { title: string }) {
           setAdminDetails({
             username: data.data.username,
             role: data.data.role,
+            imageUrl: data.data.image
           });
         })
         .catch((error) => {
@@ -91,7 +91,7 @@ export default function Header({ title }: { title: string }) {
        href='/profile'
        className='flex items-center space-x-4 p-2 hover:bg-[#315c59] hover:shadow-lg transition-all duration-300 ease-in-out rounded'>
         <Image
-          src="/login/marsupium-m.svg"
+          src={adminDetails.imageUrl || "/login/marsupium-m.svg"} // Use the dynamic image URL
           alt="User Profile"
           width={24}
           height={24}
@@ -116,7 +116,7 @@ export default function Header({ title }: { title: string }) {
       >
         <div className="flex items-center cursor-pointer transform hover:scale-105 transition-transform duration-300">
           <Image
-            src="/login/marsupium-m.svg"
+            src={adminDetails.imageUrl || "/login/marsupium-m.svg"} // Use the dynamic image URL
             alt="User Profile"
             width={32}
             height={32}

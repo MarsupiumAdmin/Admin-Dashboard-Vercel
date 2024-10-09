@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Other Next.js configurations can go here
-  
+    images: {
+      domains: ['storage.googleapis.com'], // Add this line
+    },
     // Configure middleware
     async middleware() {
       return [

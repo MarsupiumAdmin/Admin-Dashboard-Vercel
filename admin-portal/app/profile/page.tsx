@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [role, setRole] = useState('');
   const [loader,setLoader] = useState(true);
+  const [imageUrl, setImageUrl] = useState('');
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -54,6 +55,7 @@ export default function ProfilePage() {
             setName(data.data.username)
             setEmail(data.data.email)
             setRole(data.data.role);
+            data.data.image? setImageUrl(data.data.image) : setImageUrl('/login/marsupium-m.svg');
             setLoader(false);
         })
         .catch((error) => {
@@ -72,38 +74,71 @@ export default function ProfilePage() {
 
   const handleSaveChanges = async () => {
     const adminID = localStorage.getItem('adminId');
+    const accessToken = localStorage.getItem('accessToken');
+    setLoader(true);
     try {
       if (adminID) {
-        const response = await fetch(`${apiUrl}Admin/UpdateAdmin/${adminID}`,
-          {
-            method: 'PUT',
+        // If a new image is selected, upload it first
+        let uploadedImageUrl = '';
+        if (profileImage) {
+          const formData = new FormData();
+          const blob = await fetch(profileImage).then(res => res.blob()); // Convert base64 to blob
+          formData.append('file', new File([blob], 'profile_image.jpeg', { type: 'image/jpeg' }));
+  
+          // Upload the image
+          const imageResponse = await fetch(`${apiUrl}Admin/UploadImage`, {
+            method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+              'Authorization': `Bearer ${accessToken}`
             },
-            body: JSON.stringify({
-              // name: editedData.name,
-              // email: editedData.email,
-              // role: editedData.role
-            }),
+            body: formData
           });
-        if (response.ok) {
-          // setPopUpOpen(false)
-          window.location.reload();
+  
+          if (imageResponse.ok) {
+            const imageData = await imageResponse.json();
+            uploadedImageUrl = imageData.imageUrl; // Get the uploaded image URL
+  
+            // Update the profile image in the state to display it
+            setImageUrl(uploadedImageUrl); // Update to display the newly uploaded image immediately
+          } else {
+            throw new Error('Failed to upload image');
+          }
         }
-        else {
+  
+        // Prepare the admin details to update
+        const updatedAdminData = {
+          Name: name,
+          Email: email,
+          Role: role,
+          Password: password,
+          Image: uploadedImageUrl || imageUrl // Use the new image URL if available, else keep the existing
+        };
+  
+        // Update the admin details
+        const response = await fetch(`${apiUrl}Admin/UpdateAdmin/${adminID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify(updatedAdminData),
+        });
+        setLoader(false);
+        if (response.ok) {
+          window.location.reload(); // Refresh the page if needed, or you can skip this if not necessary
+        } else {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to update task');
+          throw new Error(errorData.message || 'Failed to update admin');
         }
       }
-    }
-    catch (error: any) {
-      console.error('Failed to update task:', error);
-      // handleOpenPopUp('error');
+    } catch (error) {
+      console.error('Failed to update admin:', error);
       alert(error);
     }
     setIsEditing(false);
   };
+  
+  
 
   return (
     loader? <div className="loader"></div>:
@@ -115,36 +150,41 @@ export default function ProfilePage() {
           <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
             <div className="md:flex">
               <div className="md:flex-shrink-0">
-                <div className="h-48 w-full md:w-48 bg-gray-300 flex flex-col items-center justify-center relative">
-                  <Image 
-                  src={profileImage} 
-                  alt="Profile" 
-                  className="h-full w-full object-cover" 
+              <div className="h-48 w-full md:w-48 bg-gray-300 flex flex-col items-center justify-center relative">
+                <Image
+                  src={profileImage || imageUrl} // Show the selected image if available, else show the existing image
+                  alt="Profile"
+                  className="h-full w-full object-cover"
                   width={100}
                   height={100}
-                  />
-                  <button
-                    hidden={!isEditing}
-                    onClick={triggerFileInput}
-                    className="absolute bottom-2 left-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-                  >
+                />
+                <button
+                  hidden={!isEditing}
+                  onClick={triggerFileInput}
+                  className="absolute bottom-2 left-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                >
                   <Upload className="w-4 h-4 inline mr-1" />
-                    Upload
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                </div>
+                  Upload
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  accept="image/*"
+                />
+              </div>
               </div>
               <div className="p-8 w-full">
-                <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">Admin Profile</h2>
                   <button
-                    onClick={() => setIsEditing(!isEditing)}
+                    onClick={() => {
+                      if (isEditing) {
+                        setProfileImage(''); // Clear the selected image when canceling
+                      }
+                      setIsEditing(!isEditing); // Toggle edit mode
+                    }}
                     className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
                   >
                     {isEditing ? 'Cancel' : 'Edit Profile'}
