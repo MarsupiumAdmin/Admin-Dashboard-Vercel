@@ -6,10 +6,14 @@ const geoUrl = 'https://raw.githubusercontent.com/lotusms/world-map-data/main/wo
 
 
 const UserDistribution = (data: any) => {
-  const dummyData = data.data || [];
+  const dummyData = data.data || []
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 3
   const totalPages = Math.ceil(dummyData.length / itemsPerPage)
+
+  // Tooltip state
+  const [tooltipContent, setTooltipContent] = useState('')
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
 
   // Paginate data
   const currentData = dummyData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -20,16 +24,35 @@ const UserDistribution = (data: any) => {
     }
   }
 
-  const totalUsers = dummyData.reduce((total: any, data: { users: any; }) => total + data.users, 0)
+  const totalUsers = dummyData.reduce(
+    (total: any, data: { users: any }) => total + data.users,
+    0
+  )
 
-// Function to get country fill color based on the number of users
-const getCountryFillColor = (countryName: string) => {
-  const countryData = dummyData.find((data : any) => data.country === countryName)
-  if (countryData) {
-    return '#4B91EC' // Highlight color for countries in dummyData
+  // Function to get country fill color based on the number of users
+  const getCountryFillColor = (countryName: string) => {
+    const countryData = dummyData.find((data: any) => data.country === countryName)
+    if (countryData) {
+      return '#4B91EC' // Highlight color for countries in dummyData
+    }
+    return '#A1A28A' // Default color for other countries
   }
-  return '#A1A28A' // Default color for other countries
-}
+
+  // Mouse event handlers for tooltip
+  const handleMouseEnter = (geo: any) => {
+    const { name } = geo.properties
+    const countryData = dummyData.find((data: any) => data.country === name)
+    const users = countryData ? countryData.users : 0
+    setTooltipContent(`${name}: ${users} users`)
+  }
+
+  const handleMouseMove = (event: any) => {
+    setTooltipPosition({ x: event.pageX + 10, y: event.pageY - 30 })
+  }
+
+  const handleMouseLeave = () => {
+    setTooltipContent('')
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -47,6 +70,14 @@ const getCountryFillColor = (countryName: string) => {
                       geography={geo}
                       fill={getCountryFillColor(geo.properties.name)}
                       stroke={getCountryFillColor(geo.properties.name)}
+                      onMouseEnter={() => handleMouseEnter(geo)}
+                      onMouseMove={(event) => handleMouseMove(event)}
+                      onMouseLeave={handleMouseLeave}
+                      style={{
+                        default: { outline: 'none' },
+                        hover: { fill: '#F53', outline: 'none' },
+                        pressed: { outline: 'none' },
+                      }}
                     />
                   ))
                 }
@@ -111,6 +142,25 @@ const getCountryFillColor = (countryName: string) => {
           </div>
         </div>
       </div>
+
+      {/* Tooltip */}
+      {tooltipContent && (
+        <div
+          style={{
+            position: 'absolute',
+            top: tooltipPosition.y,
+            left: tooltipPosition.x,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            color: 'white',
+            padding: '5px',
+            borderRadius: '3px',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {tooltipContent}
+        </div>
+      )}
     </div>
   )
 }
