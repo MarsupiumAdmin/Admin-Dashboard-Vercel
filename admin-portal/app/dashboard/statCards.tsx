@@ -1,7 +1,7 @@
 import { Users, Wallet, PiggyBank, UserPlus } from 'lucide-react';
 
 export default function StatCards(data:any) {
-    const players = data.data || [];
+    const players = data || [];
 
     let totalUsers = players.data.length;
 

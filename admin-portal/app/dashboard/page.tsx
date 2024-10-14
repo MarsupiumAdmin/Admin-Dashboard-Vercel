@@ -15,6 +15,7 @@ export default function Page() {
   const [username, setUsername] = useState('');
   const isLoggedIn = useAuthRedirect(); // Use the reusable function
   const [statCardsData, setStatCardsData] = useState('');
+  const [countryUser, setCountryUser] = useState('');
   const [loader,setLoader] = useState(true);
 
   useEffect(() => {
@@ -55,7 +56,14 @@ export default function Page() {
             return response.json(); // Parse the JSON response for the dashboard data
         })
         .then((dashboardData) => {
-            setStatCardsData(dashboardData)
+            const formattedData = dashboardData.analytics.rows.map((
+              item: { dimensionValues: { value: any }[]; metricValues: { value: string }[] }) => 
+                ({
+                  country: item.dimensionValues[0].value,  // Get the country from dimensionValues
+                  users: parseInt(item.metricValues[0].value)  // Get the users from metricValues and convert to integer
+              }));
+              setCountryUser(formattedData);
+            setStatCardsData(dashboardData.data)
             setLoader(false);
         })
         .catch((error) => {
@@ -81,7 +89,7 @@ export default function Page() {
             <StatCards data = {statCardsData}/>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6 lg:grid-cols-3">
             <div className="col-span-1 md:col-span-1 lg:col-span-2">
-              <UserDistribution />
+              <UserDistribution data={countryUser}/>
             </div>
             <div className="col-span-1 md:col-span-1 lg:col-span-1">
               <PushNotifications />
