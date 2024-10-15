@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { apiUrl } from '../../components/commonConstants';
 
 export default function NewPassword() {
   const [newPassword, setNewPassword] = useState('');
@@ -31,13 +32,38 @@ export default function NewPassword() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
-    } else {
-      console.log('New password set:', newPassword);
-      router.push('/login');
+      return;
+    }
+
+    const requestBody = {
+      password: newPassword,
+      confirmpassword: confirmPassword,
+    };
+
+    try {
+      const token = sessionStorage.getItem('Header'); // Get the token from sessionStorage
+      const response = await fetch(`${apiUrl}Auth/UpdatePasswordAdmin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Add Bearer token in headers
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        router.push('/login');
+      } else {
+        const errorResponse = await response.json();
+        setError(errorResponse.message || 'Failed to update password');
+      }
+    } catch (err) {
+      console.error('Error updating password:', err);
+      setError('An error occurred while updating the password. Please try again.');
     }
   };
 

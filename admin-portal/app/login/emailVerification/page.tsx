@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { apiUrl } from '../../components/commonConstants';
 
 export default function EmailVerification() {
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -10,10 +11,10 @@ export default function EmailVerification() {
   const [timerExpired, setTimerExpired] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [svgScale, setSvgScale] = useState(1);
+  const [flag, setFlag] = useState(true);
   const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const email = searchParams.get('email') || '';
-  const email = 'testemail@gmail.com';
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email') || ''; // Get email from URL query parameters
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,13 +59,31 @@ export default function EmailVerification() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const enteredOtp = otp.join('');
-    if (enteredOtp === '0000') {
-      router.push('/login/newPassword');
-    } else {
-      alert('Incorrect OTP. Please try again.');
+    try {
+      const response = await fetch(`${apiUrl}Auth/VerifyOtpAdmin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          otp: enteredOtp,
+        }),
+      });
+      const data = await response.json();
+      console.log("Done");
+      if (response.ok) {
+        sessionStorage.setItem('Header',data.accessToken);
+        router.push('/login/newPassword');
+      } else {
+        setFlag(false);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      alert('An error occurred. Please try again.');
     }
   };
 
@@ -112,7 +131,7 @@ export default function EmailVerification() {
             <span className="text-lg font-open-sans text-[#5C5C5C]">Marsupium</span>
           </div>
           <h2 className="text-2xl font-bold mb-4">Email Verification</h2>
-          <p className="text-[#5C5C5C] mb-8">A 4 digit code has been sent to {email}</p>
+          <p className="text-[#5C5C5C] mb-8">A 4-digit code has been sent to {email}</p>
           <form className="flex flex-col" onSubmit={handleSubmit}>
             <div className="flex justify-between mb-8">
               {otp.map((digit, index) => (
@@ -127,6 +146,7 @@ export default function EmailVerification() {
                 />
               ))}
             </div>
+            {flag ? '': <label className='mb-2 text-red-500'>Incorrect OTP</label>}
             <button
               type="submit"
               className="w-full p-2 bg-[#4ECDC4] text-white rounded-md hover:text-gray-900 transition-colors duration-300 hover:bg-[#4ecdc4cc] mt-4"

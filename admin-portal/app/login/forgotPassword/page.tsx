@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { apiUrl } from '../../components/commonConstants';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [svgScale, setSvgScale] = useState(1);
+  const [flag, setFlag] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,8 +33,26 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Password reset requested for:', email);
-    router.push(`/login/emailVerification?email=${encodeURIComponent(email)}`);
+    try {
+      const response = await fetch(`${apiUrl}Auth/RequestOtpEmailAdmin`, {
+        method: 'POST',
+        body: JSON.stringify({ email }), // Send the email as payload
+        headers: {
+          'Content-Type': 'application/json', // Inform the server of the content type
+        },
+      });
+      if(response.status == 400){
+        setFlag(false);
+      }
+      if (response.ok) {
+        router.push(`/login/emailVerification?email=${encodeURIComponent(email)}`);
+      }
+      else {
+        console.error('Failed to request password reset:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error occurred while requesting password reset:', error);
+    }
   };
 
   return (
@@ -91,6 +111,9 @@ export default function ForgotPassword() {
                 required
               />
             </label>
+            {flag ? '':<label className='mb-2 text-red-600'>
+              Email does not exist
+            </label>}
             <button
               type="submit"
               className="w-full p-2 bg-[#4ECDC4] text-white rounded-md hover:text-gray-900 transition-colors duration-300 hover:bg-[#4ecdc4cc] mt-4"
