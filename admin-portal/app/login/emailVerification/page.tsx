@@ -13,10 +13,11 @@ export default function EmailVerification() {
   const [svgScale, setSvgScale] = useState(1);
   const [flag, setFlag] = useState(true);
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  // console.log(localStorage.getItem('email'));
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    
+    setEmail(localStorage.getItem('email'));
     const handleResize = () => {
       const width = window.innerWidth;
       setIsMobile(width < 768);
