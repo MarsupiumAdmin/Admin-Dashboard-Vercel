@@ -45,7 +45,7 @@ export default function NewPassword() {
     };
 
     try {
-      const token = sessionStorage.getItem('Header'); // Get the token from sessionStorage
+      const token = localStorage.getItem('Header'); // Get the token from localStorage
       const response = await fetch(`${apiUrl}Auth/UpdatePasswordAdmin`, {
         method: 'POST',
         headers: {

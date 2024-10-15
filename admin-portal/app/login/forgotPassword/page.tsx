@@ -45,7 +45,8 @@ export default function ForgotPassword() {
         setFlag(false);
       }
       if (response.ok) {
-        router.push(`/login/emailVerification?email=${encodeURIComponent(email)}`);
+        localStorage.setItem('email', email);
+        router.push(`/login/emailVerification`);
       }
       else {
         console.error('Failed to request password reset:', response.statusText);
