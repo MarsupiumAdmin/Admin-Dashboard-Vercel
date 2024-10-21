@@ -7,9 +7,8 @@ ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 export default function PushNotifications(data:any) {
   // Data for the pie chart
-  console.log("Data", data.data);
   const chartData = {
-    labels: [data.data[0].event, data.data[1].event, data.data[2].event],
+    labels: ['Notification delivered to device', 'User dismisses notification', 'Notification while app in use'],
     datasets: [
       {
         label: '',
