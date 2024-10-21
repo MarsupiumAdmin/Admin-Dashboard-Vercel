@@ -17,7 +17,7 @@ Make sure you have the following installed on your system:
 First, clone the repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/MarsupiumAdmin/Admin-Dashboard-Vercel.git
 cd admin-portal
 ```
 
